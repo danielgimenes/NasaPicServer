@@ -13,7 +13,7 @@ import javax.persistence.*
 @Entity(name = "SpacePic")
 class SpacePic {
 
-    // TODO split entity and dto
+    // TODO split class in entity and dto
 
     @Id
     @SequenceGenerator(name = "space_pic_id_seq", sequenceName = "space_pic_id_seq", allocationSize = 1)
@@ -36,6 +36,12 @@ class SpacePic {
 
     @Column(nullable = false, length = 768)
     var originalApiImageUrl: String? = null
+        @JsonProperty get
+
+    @Column(nullable = true)
+    @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    var originallyPublishedAt: Date? = null
         @JsonProperty get
 
     @Column(nullable = false, length = 256)
