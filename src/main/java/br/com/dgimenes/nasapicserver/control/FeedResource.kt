@@ -1,6 +1,6 @@
 package br.com.dgimenes.nasapicserver.control
 
-import br.com.dgimenes.nasapicserver.model.SpacePic
+import br.com.dgimenes.nasapicserver.model.SpacePicDTO
 import javax.ws.rs.GET
 import javax.ws.rs.Path
 import javax.ws.rs.Produces
@@ -11,9 +11,11 @@ import javax.ws.rs.core.MediaType
 @Produces(MediaType.APPLICATION_JSON)
 class FeedResource(val persistenceUnit: String?) {
 
+    // TODO paging
+
     @Path("/list")
     @GET
-    fun userFeedMessages(@QueryParam("device-id") deviceId : String?) : List<SpacePic>? {
+    fun userFeedMessages(@QueryParam("device-id") deviceId : String?) : List<SpacePicDTO>? {
         // TODO register that the user with device-id requested for the feed
         return FeedRepository(persistenceUnit).getFeedForUser(deviceId)
     }

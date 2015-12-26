@@ -1,6 +1,7 @@
 package br.com.dgimenes.nasapicserver.control
 
 import br.com.dgimenes.nasapicserver.model.SpacePic
+import br.com.dgimenes.nasapicserver.model.SpacePicDTO
 import br.com.dgimenes.nasapicserver.model.SpacePicStatus
 import javax.persistence.EntityManager
 import javax.persistence.Persistence
@@ -13,11 +14,11 @@ class FeedRepository {
         em = factory.createEntityManager();
     }
 
-    fun getFeedForUser(deviceId: String?) : List<SpacePic>? {
-        val query = em!!.createQuery("from SpacePic where status = :status order by publishedAt desc");
+    fun getFeedForUser(deviceId: String?) : List<SpacePicDTO>? {
+        val query = em!!.createQuery("from SpacePic where status = :status order by originallyPublishedAt desc");
         query.setMaxResults(10)
         query.setParameter("status", SpacePicStatus.PUBLISHED)
-        val spacePics= query.resultList as List<SpacePic>?
-        return spacePics
+        val spacePics = query.resultList as List<SpacePic>?
+        return spacePics!!.map { SpacePicDTO(it) }
     }
 }
