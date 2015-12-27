@@ -14,9 +14,11 @@ class FeedRepository {
         em = factory.createEntityManager();
     }
 
-    fun getFeedForUser(deviceId: String?) : List<SpacePicDTO>? {
-        val query = em!!.createQuery("from SpacePic where status = :status order by originallyPublishedAt desc");
-        query.setMaxResults(10)
+    fun getFeedForUser(deviceId: String?, page: Int) : List<SpacePicDTO>? {
+        val query = em!!.createQuery("from SpacePic where status = :status order by originallyPublishedAt desc")
+        val pageSize = 5
+        query.setFirstResult((page - 1) * pageSize)
+        query.setMaxResults(pageSize)
         query.setParameter("status", SpacePicStatus.PUBLISHED)
         val spacePics = query.resultList as List<SpacePic>?
         return spacePics!!.map { SpacePicDTO(it) }
