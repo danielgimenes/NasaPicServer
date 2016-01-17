@@ -29,7 +29,9 @@ class FeedResource(val persistenceUnit: String?) {
         val currPage = if (page ?: firstPage > lastPage) lastPage else if (page ?: firstPage < firstPage) firstPage
             else page ?: firstPage
         val nextPage = if (currPage == lastPage) null else currPage+1
-        val feedResult = FeedDTO(FeedRepository(persistenceUnit).getFeedForUser(deviceId, currPage)!!)
+        val repo = FeedRepository(persistenceUnit)
+        val feedResult = FeedDTO(repo.getFeedForUser(deviceId, currPage)!!)
+        repo.destroy()
         feedResult.paging = PagingData(getFeedUrl(currPage), if (nextPage != null) getFeedUrl(nextPage) else null)
 
         val cc = CacheControl()

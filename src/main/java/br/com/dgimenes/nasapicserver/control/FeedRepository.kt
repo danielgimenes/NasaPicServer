@@ -4,13 +4,15 @@ import br.com.dgimenes.nasapicserver.model.SpacePic
 import br.com.dgimenes.nasapicserver.model.SpacePicDTO
 import br.com.dgimenes.nasapicserver.model.SpacePicStatus
 import javax.persistence.EntityManager
+import javax.persistence.EntityManagerFactory
 import javax.persistence.Persistence
 
 class FeedRepository {
-    var em : EntityManager? = null
+    val factory : EntityManagerFactory
+    var em : EntityManager
 
     constructor(persistenceUnit: String?) {
-        val factory = Persistence.createEntityManagerFactory(persistenceUnit);
+        factory = Persistence.createEntityManagerFactory(persistenceUnit)
         em = factory.createEntityManager();
     }
 
@@ -22,5 +24,10 @@ class FeedRepository {
         query.setParameter("status", SpacePicStatus.PUBLISHED)
         val spacePics = query.resultList as List<SpacePic>?
         return spacePics!!.map { SpacePicDTO(it) }
+    }
+
+    fun destroy() {
+        em.close()
+        factory.close()
     }
 }
