@@ -6,9 +6,7 @@ import javax.ws.rs.GET
 import javax.ws.rs.Path
 import javax.ws.rs.Produces
 import javax.ws.rs.QueryParam
-import javax.ws.rs.core.Context
-import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.UriInfo
+import javax.ws.rs.core.*
 
 const val RESOURCE_PATH = "/feed"
 const val FEED_PATH = "/list"
@@ -25,7 +23,7 @@ class FeedResource(val persistenceUnit: String?) {
     @Path(FEED_PATH)
     @GET
     fun userFeedMessages(@QueryParam("device-id") deviceId: String?, @QueryParam("page") page: Int?)
-            : FeedDTO? {
+            : Response {
         val lastPage = 30
         val firstPage = 1
         val currPage = if (page ?: firstPage > lastPage) lastPage else if (page ?: firstPage < firstPage) firstPage
@@ -33,7 +31,12 @@ class FeedResource(val persistenceUnit: String?) {
         val nextPage = if (currPage == lastPage) null else currPage+1
         val feedResult = FeedDTO(FeedRepository(persistenceUnit).getFeedForUser(deviceId, currPage)!!)
         feedResult.paging = PagingData(getFeedUrl(currPage), if (nextPage != null) getFeedUrl(nextPage) else null)
-        return feedResult
+
+        val cc = CacheControl()
+        val MAX_CACHE_IN_HOURS = 12
+        cc.maxAge = 60 * 60 * MAX_CACHE_IN_HOURS
+        cc.isPrivate = true
+        return Response.ok(feedResult).cacheControl(cc).build()
     }
 
     private fun getFeedUrl(page: Int) =
