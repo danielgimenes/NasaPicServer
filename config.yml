@@ -2,7 +2,7 @@ persistenceUnit: primary_pu_dev
 server:
   applicationConnectors:
   - type: http 
-    port: 9123
+    port: 8080
   adminConnectors:
   - type: http
-    port: 9001
+    port: 8081

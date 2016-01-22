@@ -30,18 +30,18 @@ class FeedResource(val persistenceUnit: String?) {
         val repo = SpacePicRepository(persistenceUnit)
         val feedResult = ResultDTO(repo.getFeedForUser(deviceId, currPage)!!)
         repo.destroy()
-        feedResult.paging = PagingData(getFeedUrl(currPage), if (nextPage != null) getFeedUrl(nextPage) else null)
+        feedResult.paging = PagingData(getFeedUrl(currPage),
+                if (nextPage != null) getFeedUrl(nextPage) else null)
 
         val cc = CacheControl()
-        val MAX_CACHE_IN_HOURS = 8
+        val MAX_CACHE_IN_HOURS = 12
         cc.maxAge = 60 * 60 * MAX_CACHE_IN_HOURS
-        cc.isPrivate = true
+        cc.isPrivate = false
         return Response.ok(feedResult).cacheControl(cc).build()
     }
 
     private fun getFeedUrl(page: Int) =
             "${uriInfo.baseUri.toString().removeSuffix("/")}$RESOURCE_PATH$FEED_PATH?page=$page"
-
 
     @Path(BESTPICS_PATH)
     @GET
@@ -52,12 +52,13 @@ class FeedResource(val persistenceUnit: String?) {
         val repo = SpacePicRepository(persistenceUnit)
         val bestPicsResult = ResultDTO(repo.getBestPictures(currPage)!!)
         repo.destroy()
-        bestPicsResult.paging = PagingData(getBestPicsUrl(currPage), if (nextPage != null) getBestPicsUrl(nextPage) else null)
+        bestPicsResult.paging = PagingData(getBestPicsUrl(currPage),
+                if (nextPage != null) getBestPicsUrl(nextPage) else null)
 
         val cc = CacheControl()
-        val MAX_CACHE_IN_HOURS = 48
-        cc.maxAge = 60 * 60 * MAX_CACHE_IN_HOURS
-        cc.isPrivate = true
+        val MAX_CACHE_IN_DAYS = 5
+        cc.maxAge = 60 * 60 * 24 * MAX_CACHE_IN_DAYS
+        cc.isPrivate = false
         return Response.ok(bestPicsResult).cacheControl(cc).build()
     }
 
@@ -73,7 +74,7 @@ class FeedResource(val persistenceUnit: String?) {
 
     private fun getCurrPage(page: Int?): Int {
         return if (page ?: firstPage > lastPage) lastPage else if (page ?: firstPage < firstPage) firstPage
-        else page ?: firstPage
+            else page ?: firstPage
     }
 }
 
