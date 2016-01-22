@@ -76,6 +76,10 @@ class SpacePic {
     @Enumerated(EnumType.STRING)
     var source: SpacePicSource? = null
         get
+
+    @Column(nullable = true)
+    var best: Boolean? = false
+        get
 }
 
 enum class SpacePicSource {
