@@ -19,7 +19,7 @@ class SpacePicRepository {
     }
 
     fun getFeedForUser(deviceId: String?, page: Int) : List<SpacePicDTO>? {
-        val query = em!!.createQuery("""
+        val query = em.createQuery("""
             FROM SpacePic
             WHERE status = :status
             ORDER BY originallyPublishedAt DESC
@@ -33,7 +33,7 @@ class SpacePicRepository {
     }
 
     fun getBestPictures(page: Int) : List<SpacePicDTO>? {
-        val query = em!!.createQuery("""
+        val query = em.createQuery("""
             FROM SpacePic
             WHERE status = :status
             AND best = True
